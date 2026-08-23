@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -36,5 +38,20 @@ class Achievement extends Model
             'threshold' => 'integer',
             'sort_order' => 'integer',
         ];
+    }
+
+    public function unlocks(): HasMany
+    {
+        return $this->hasMany(UserAchievement::class);
+    }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            'user_achievements',
+        )
+            ->withPivot('unlocked_at')
+            ->withTimestamps();
     }
 }

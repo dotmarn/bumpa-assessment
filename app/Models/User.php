@@ -33,7 +33,7 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    
+
     public function achievementUnlocks(): HasMany
     {
         return $this->hasMany(UserAchievement::class);

@@ -25,13 +25,16 @@ class UserSeeder extends Seeder
                 'last_name' => 'Testing',
                 'email' => 'test1@example.com',
                 'password' => 'password',
-            ]
+            ],
         ];
 
         foreach ($users as $user) {
             User::query()->updateOrCreate(
                 ['email' => $user['email']],
-                $user
+                [
+                    ...$user,
+                    'email_verified_at' => now(),
+                ]
             );
         }
     }

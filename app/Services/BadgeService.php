@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\BadgeUnlockedEvent;
 use App\Models\Badge;
 use App\Models\User;
 use App\Models\UserBadge;
@@ -42,6 +43,13 @@ class BadgeService
                 ]);
             });
         }, attempts: 3);
+
+        $unlocks->each(function (UserBadge $unlock): void {
+            BadgeUnlockedEvent::dispatch(
+                badge_name: $unlock->badge->name,
+                user: $unlock->user,
+            );
+        });
 
         return $unlocks;
     }

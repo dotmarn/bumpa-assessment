@@ -48,6 +48,13 @@ class AchievementService
             });
         }, attempts: 3);
 
+        $unlocks->each(function (UserAchievement $unlock): void {
+            AchievementUnlockedEvent::dispatch(
+                achievement_name: $unlock->achievement->name,
+                user: $unlock->user,
+            );
+        });
+
         return $unlocks;
     }
 }

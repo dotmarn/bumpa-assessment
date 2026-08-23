@@ -3,24 +3,18 @@
 namespace App\Listeners;
 
 use App\Events\AchievementUnlockedEvent;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
+use App\Services\BadgeService;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 
-class AchievementUnlockedListener
+class AchievementUnlockedListener implements ShouldQueueAfterCommit
 {
-    /**
-     * Create the event listener.
-     */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct(private BadgeService $badgeService) {}
 
     /**
      * Handle the event.
      */
     public function handle(AchievementUnlockedEvent $event): void
     {
-        //
+        $this->badgeService->unlockEligibleBadges($event->user);
     }
 }

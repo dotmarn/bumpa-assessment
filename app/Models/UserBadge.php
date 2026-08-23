@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\UserBadgeFactory;
 use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,7 +18,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[UseFactory(UserBadge::class)]
+#[UseFactory(UserBadgeFactory::class)]
 #[Guarded(['id'])]
 class UserBadge extends Model
 {

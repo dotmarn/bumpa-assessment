@@ -166,6 +166,18 @@ The seeded payout account uses Paystack's documented test details:
 - Bank code: `057`
 - Account number: `0000000000`
 
+Generate Webhook route via Sail 
+```bash
+sail share --subdomain=bumpa
+```
+
+Configure the Paystack dashboard webhook URL to point to the public HTTPS endpoint:
+
+```text
+https://bumpa.laravel-sail.site/api/webhooks/paystack
+```
+
+The endpoint verifies `x-paystack-signature` against the exact request body. Signed `transfer.success`, `transfer.failed`, and `transfer.reversed` events reconcile submitted cashback records to their final state. Duplicate events, unrelated events, and unknown references are acknowledged safely without creating payments.
 
 ## Testing
 

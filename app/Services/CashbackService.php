@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\CashbackPaymentStatus;
+use App\Jobs\ProcessBadgeCashback;
 use App\Models\CashbackPayment;
 use App\Models\User;
 use App\Models\UserBadge;
@@ -29,6 +30,10 @@ class CashbackService
                 ],
             );
         }, attempts: 3);
+
+        if ($cashbackPayment->wasRecentlyCreated) {
+            ProcessBadgeCashback::dispatch($cashbackPayment->getKey())->afterCommit();
+        }
 
         return $cashbackPayment;
     }

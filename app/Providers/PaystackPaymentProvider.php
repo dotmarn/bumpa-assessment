@@ -78,6 +78,6 @@ class PaystackPaymentProvider implements PaymentProvider
             ->asJson()
             ->withToken((string) config('services.paystack.secret_key'))
             ->connectTimeout(3)
-            ->timeout(30);
+            ->timeout(10);
     }
 }

@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'paystack' => [
+        'secret_key' => env('PAYSTACK_SECRET_KEY'),
+        'base_url' => env('PAYSTACK_BASE_URL', 'https://api.paystack.co'),
+        'cashback_amount' => (int) env('PAYSTACK_CASHBACK_AMOUNT', 30000),
+    ],
+
 ];

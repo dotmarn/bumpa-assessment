@@ -42,10 +42,14 @@ class AchievementProgressService
             ->orderBy('sort_order')
             ->get(['id', 'name', 'required_achievements']);
 
-        $currentBadge = $badges
-            ->last(fn (Badge $badge): bool => $badge->required_achievements <= $achievementCount);
+        $earnedBadge = $user->badges()
+            ->orderByDesc('required_achievements')
+            ->orderByDesc('sort_order')
+            ->first(['badges.id', 'name', 'required_achievements']);
+        $currentBadge = $earnedBadge ?? $badges
+            ->first(fn (Badge $badge): bool => $badge->required_achievements === 0);
         $nextBadge = $badges
-            ->first(fn (Badge $badge): bool => $badge->required_achievements > $achievementCount);
+            ->first(fn (Badge $badge): bool => $badge->required_achievements > ($currentBadge?->required_achievements ?? 0));
 
         return [
             'unlocked_achievements' => $unlockedAchievements->pluck('name')->all(),
@@ -54,7 +58,7 @@ class AchievementProgressService
             'next_badge' => $nextBadge?->name,
             'remaining_to_unlock_next_badge' => $nextBadge === null
                 ? 0
-                : $nextBadge->required_achievements - $achievementCount,
+                : max(0, $nextBadge->required_achievements - $achievementCount),
         ];
     }
 }

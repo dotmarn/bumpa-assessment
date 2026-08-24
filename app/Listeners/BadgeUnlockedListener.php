@@ -3,24 +3,21 @@
 namespace App\Listeners;
 
 use App\Events\BadgeUnlockedEvent;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
+use App\Services\CashbackService;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 
-class BadgeUnlockedListener
+class BadgeUnlockedListener implements ShouldQueueAfterCommit
 {
-    /**
-     * Create the event listener.
-     */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct(private CashbackService $cashbackService) {}
 
     /**
      * Handle the event.
      */
     public function handle(BadgeUnlockedEvent $event): void
     {
-        //
+        $this->cashbackService->handle(
+            user: $event->user,
+            badgeName: $event->badge_name,
+        );
     }
 }

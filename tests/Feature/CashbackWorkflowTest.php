@@ -41,7 +41,7 @@ it('creates one cashback ledger entry for a badge and queues its processing', fu
         ->and($cashbackPayment->amount)->toBe(30000)
         ->and($cashbackPayment->currency)->toBe('NGN')
         ->and($cashbackPayment->reference)->toBe(
-            sprintf('cashback-badge-%010d', $userBadge->getKey()),
+            sprintf('cashback-payout-%010d', $userBadge->getKey()),
         );
 
     Queue::assertPushedTimes(ProcessBadgeCashback::class, 1);

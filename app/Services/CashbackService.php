@@ -25,7 +25,7 @@ class CashbackService
                     'amount' => (int) config('services.paystack.cashback_amount'),
                     'currency' => 'NGN',
                     'provider' => 'paystack',
-                    'reference' => sprintf('cashback-badge-%010d', $userBadge->getKey()),
+                    'reference' => sprintf('cashback-payout-%010d', $userBadge->getKey()),
                     'status' => CashbackPaymentStatus::Pending,
                 ],
             );

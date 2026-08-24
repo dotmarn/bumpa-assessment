@@ -67,14 +67,17 @@ class ProcessBadgeCashback implements ShouldBeUnique, ShouldQueue
                 reason: sprintf('Cashback for unlocking the %s badge', $cashbackPayment->userBadge->badge->name),
             );
 
-            $cashbackPayment->update([
-                'status' => $result['status'] === 'success'
-                    ? CashbackPaymentStatus::Succeeded
-                    : CashbackPaymentStatus::Submitted,
-                'recipient_code' => $recipientCode,
-                'provider_transfer_code' => $result['transfer_code'],
-                'processed_at' => now(),
-            ]);
+            CashbackPayment::query()
+                ->whereKey($cashbackPayment->getKey())
+                ->where('status', CashbackPaymentStatus::Processing)
+                ->update([
+                    'status' => $result['status'] === 'success'
+                        ? CashbackPaymentStatus::Succeeded
+                        : CashbackPaymentStatus::Submitted,
+                    'recipient_code' => $recipientCode,
+                    'provider_transfer_code' => $result['transfer_code'],
+                    'processed_at' => now(),
+                ]);
         } catch (RequestException $exception) {
             if ($exception->response->serverError() || $exception->response->status() === 429) {
                 throw $exception;

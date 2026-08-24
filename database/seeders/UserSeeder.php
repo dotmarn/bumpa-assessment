@@ -29,11 +29,20 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($users as $user) {
-            User::query()->updateOrCreate(
+            $user = User::query()->updateOrCreate(
                 ['email' => $user['email']],
                 [
                     ...$user,
                     'email_verified_at' => now(),
+                ]
+            );
+
+            $user->payoutAccount()->updateOrCreate(
+                ['user_id' => $user['id']],
+                [
+                    'bank_code' => '057',
+                    'account_number' => '0000000000',
+                    'account_name' => 'Test Account',
                 ]
             );
         }

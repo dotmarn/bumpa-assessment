@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 /**
@@ -39,5 +40,10 @@ class UserBadge extends Model
     public function badge(): BelongsTo
     {
         return $this->belongsTo(Badge::class);
+    }
+
+    public function cashbackPayment(): HasOne
+    {
+        return $this->hasOne(CashbackPayment::class);
     }
 }

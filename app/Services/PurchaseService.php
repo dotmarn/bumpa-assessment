@@ -20,36 +20,33 @@ class PurchaseService
     public function create(User $user, array $payload): array
     {
         $result = DB::transaction(function () use ($user, $payload): array {
-            $existingPurchase = Purchase::query()
-                ->where('reference', $payload['reference'])
-                ->lockForUpdate()
-                ->first();
+            $product = Product::query()->findOrFail($payload['product_id']);
 
-            if ($existingPurchase !== null) {
-                $this->ensureIdempotentReplay($existingPurchase, $user, $payload);
+            $purchase = Purchase::query()->firstOrCreate(
+                ['reference' => $payload['reference']],
+                [
+                    'user_id' => $user->getKey(),
+                    'product_id' => $product->getKey(),
+                    'quantity' => $payload['quantity'],
+                    'unit_price' => $product->price,
+                    'amount' => $product->price * $payload['quantity'],
+                ],
+            );
+
+            if (! $purchase->wasRecentlyCreated) {
+                $this->ensureIdempotentReplay($purchase, $user, $payload);
 
                 return [
-                    'purchase' => $existingPurchase,
+                    'purchase' => $purchase,
                     'was_created' => false,
                 ];
             }
-
-            $product = Product::query()->findOrFail($payload['product_id']);
 
             if (! $product->is_active) {
                 throw ValidationException::withMessages([
                     'product_id' => ['The selected product is inactive.'],
                 ]);
             }
-
-            $purchase = Purchase::query()->create([
-                'user_id' => $user->getKey(),
-                'product_id' => $product->getKey(),
-                'reference' => $payload['reference'],
-                'quantity' => $payload['quantity'],
-                'unit_price' => $product->price,
-                'amount' => $product->price * $payload['quantity'],
-            ]);
 
             return [
                 'purchase' => $purchase,
